@@ -4,7 +4,7 @@ mod windows;
 use crate::public::KeybdKey::*;
 use crate::windows::*;
 use std::fs;
-use std::{thread::sleep, time::Duration};
+// use std::{thread::sleep, time::Duration};
 
 fn main() {
     listener()
@@ -13,13 +13,25 @@ fn main() {
 // ---------------------------------------------------------------------------
 fn listener() {
     let content = fs::read_to_string("combo.txt").expect("Something went wrong reading the file");
-    let str_arr: Vec<&str> = content.split(",").collect();
-    let numb_arr_from_srt = match_key_to_numbers(str_arr);
-    println!(
-        "every time you press SPACE {:?} keys will be press too",
-        content
-    );
-    SpaceKey.bind(move || generated_cb_function(&numb_arr_from_srt));
+
+    let content_lines: Vec<&str> = content.lines().collect();
+    for line in content_lines {
+        let two_keys: Vec<&str> = line.split("-").collect();
+        let action_keys: Vec<&str> = two_keys[1].split(",").collect();
+        let numb_arr_from_press_key = match_key_to_numbers(vec![two_keys[0]]);
+        let os_keys_arr = os_keys();
+        let listener_key = os_keys_arr[numb_arr_from_press_key[0] as usize];
+        println!(
+            "
+        ------------------------------------------------------
+          {:?} = {:?}
+        ------------------------------------------------------
+        ",
+            listener_key, action_keys
+        );
+        let numb_arr_from_action_key_str = match_key_to_numbers(action_keys);
+        listener_key.bind(move || generated_cb_function(&numb_arr_from_action_key_str));
+    }
     handle_input_events();
 }
 

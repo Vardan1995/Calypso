@@ -1,1 +1,4 @@
-V,A,R,D
+Q-Z,D,F
+W-D,F,G
+E-F,F,G
+R-U,T,B
