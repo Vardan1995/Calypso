@@ -1,1 +1,1 @@
-CapsLock,A,T
+V,A,R,D

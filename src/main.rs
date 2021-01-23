@@ -15,18 +15,26 @@ fn listener() {
     let content = fs::read_to_string("combo.txt").expect("Something went wrong reading the file");
     let str_arr: Vec<&str> = content.split(",").collect();
     let numb_arr_from_srt = match_key_to_numbers(str_arr);
+    println!(
+        "every time you press SPACE {:?} keys will be press too",
+        content
+    );
     SpaceKey.bind(move || generated_cb_function(&numb_arr_from_srt));
     handle_input_events();
 }
 
 fn generated_cb_function(nums: &Vec<usize>) {
-    println!("{:?}", nums);
     let arr = os_keys();
     for (i, num) in nums.iter().enumerate() {
         if nums[i] < arr.len() {
             let key = arr[*num as usize];
             key.press();
-            sleep(Duration::from_millis(10));
+        }
+    }
+
+    for (i, num) in nums.iter().enumerate() {
+        if nums[i] < arr.len() {
+            let key = arr[*num as usize];
             key.release();
         }
     }
