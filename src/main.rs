@@ -1,9 +1,9 @@
 mod common;
 mod public;
 mod windows;
-
 use crate::public::KeybdKey::*;
 use crate::windows::*;
+use std::fs;
 use std::{thread::sleep, time::Duration};
 
 fn main() {
@@ -12,12 +12,22 @@ fn main() {
 
 // ---------------------------------------------------------------------------
 fn listener() {
-    SpaceKey.bind(|| generated_cb_function(vec![1, 1, 1, 0, 2, 3, 4]));
+    let content = fs::read_to_string("combo.txt").expect("Something went wrong reading the file");
+    let numb_arr_from_srt: Vec<usize> = content
+        .split(",")
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .map(|s| s.parse().unwrap())
+        .collect();
+    SpaceKey.bind(move || generated_cb_function(&numb_arr_from_srt));
     handle_input_events();
 }
 
-fn generated_cb_function(nums: Vec<usize>) {
-    let arr = [QKey, WKey, EKey, RKey, IKey];
+fn generated_cb_function(nums: &Vec<usize>) {
+    // println!("{:?}", a);
+    let arr = [
+        LShiftKey, QKey, WKey, EKey, RKey, TKey, YKey, UKey, IKey, OKey, PKey,
+    ];
     for (i, num) in nums.iter().enumerate() {
         if nums[i] < arr.len() {
             let key = arr[*num as usize];
@@ -26,6 +36,6 @@ fn generated_cb_function(nums: Vec<usize>) {
             key.release();
         }
     }
-    // }
 }
+
 // ----------------------------------------------------------------------------
